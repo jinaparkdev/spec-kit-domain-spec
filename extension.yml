@@ -1,0 +1,65 @@
+schema_version: "1.0"
+
+extension:
+  id: domain-spec
+  name: "Domain Spec Maintenance"
+  version: "0.1.0"
+  description: "Keeps canonical per-domain specs: read before specify/plan, updated after implement"
+  author: "Jina Park"
+  repository: https://github.com/jinaparkdev/spec-kit-domain-spec
+  homepage: https://github.com/jinaparkdev/spec-kit-domain-spec
+  license: MIT
+
+requires:
+  speckit_version: ">=0.8.5"
+  tools:
+    - name: git
+      required: false
+    - name: rg
+      required: false
+
+provides:
+  commands:
+    - name: speckit.domain-spec.context
+      file: commands/speckit.domain-spec.context.md
+      description: "Read the domain specs relevant to the current feature before specifying or planning"
+    - name: speckit.domain-spec.update
+      file: commands/speckit.domain-spec.update.md
+      description: "Fold the implemented feature into the canonical domain specs"
+    - name: speckit.domain-spec.bootstrap
+      file: commands/speckit.domain-spec.bootstrap.md
+      description: "Scaffold the domain spec directory and consolidate existing feature specs into domain specs"
+
+  config:
+    - name: "domain-spec-config.yml"
+      template: "config-template.yml"
+      description: "Domain spec layout, shared-rule ownership, data sources and output language"
+      required: false
+
+hooks:
+  before_specify:
+    command: speckit.domain-spec.context
+    optional: false
+    description: "Load relevant domain specs before writing the feature spec"
+  before_plan:
+    command: speckit.domain-spec.context
+    optional: false
+    description: "Load relevant domain specs before planning"
+  after_implement:
+    command: speckit.domain-spec.update
+    optional: false
+    description: "Update canonical domain specs with the implemented change"
+
+tags:
+  - "documentation"
+  - "governance"
+  - "specs"
+  - "living-docs"
+
+config:
+  defaults:
+    language: English
+    domains_dir: specs/_domains
+    feature_dirs: "specs/[0-9][0-9][0-9]-*"
+    base_branch: main
+    rule_tag: feature_dir

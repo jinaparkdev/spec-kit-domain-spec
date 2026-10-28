@@ -1,0 +1,83 @@
+# Domain Spec extension configuration
+# Copied to .specify/extensions/domain-spec/domain-spec-config.yml on install.
+# Personal overrides go in .specify/extensions/domain-spec/local-config.yml (gitignored).
+# Every key is optional; a missing key falls back to the default shown here.
+
+# Language for the reports the commands print and for prose written into domain
+# specs. Paths, identifiers, field names, issue keys and error codes always stay
+# verbatim. Examples: English, Korean, Japanese.
+language: English
+
+# Where the canonical domain specs live.
+domains_dir: specs/_domains
+
+# Glob for the per-feature spec directories that /speckit-specify creates. These
+# are change history; the domain specs are the source of truth.
+# Examples: "specs/[0-9][0-9][0-9]-*" (sequential), "specs/PROJ-*" (Jira keys).
+feature_dirs: "specs/[0-9][0-9][0-9]-*"
+
+# Other directories that record behaviour changes made outside /speckit-implement
+# (for example a bug-fix extension's working directories). The update command
+# accepts one of these as $ARGUMENTS. Leave empty if you have none.
+extra_change_dirs: []
+#  - .specify/bugs/*
+
+# Branch the implementation diff is measured against (merge-base with
+# origin/<base_branch>, falling back to <base_branch>).
+base_branch: main
+
+# How changed rules are tagged with their origin:
+#   feature_dir - the feature directory name, e.g. (012-loan-renewal)
+#   issue_key   - the issue key matched by issue_key_pattern, e.g. (LIB-412)
+rule_tag: feature_dir
+issue_key_pattern: "[A-Z][A-Z0-9]+-[0-9]+"
+
+# Shared rules that several domains rely on. Each lives in exactly one domain
+# under <domains_dir>/_common/ and other domains link to it instead of restating.
+# `include_when` tells the context command when to load it; `owns` tells the
+# update command which rules may only be written there.
+common_domains: []
+#  - path: _common/auth
+#    include_when: "the feature logs in, changes sessions, roles or permission checks"
+#    owns: "login, session lifetime, roles, permission checks"
+#  - path: _common/pagination
+#    include_when: "the feature lists records, pages, sorts or filters"
+#    owns: "page size, cursor format, sort and filter parameters"
+
+# Persisted data whose shape belongs in each domain's data-model.md. The update
+# command checks the diff for changes here (new/renamed/removed fields, changed
+# meaning or value sets). Use globs; `kind` is a free-text hint.
+data_sources: []
+#  - path: "db/migrations/**"
+#    kind: "SQL migrations - the schema is the result of applying all of them"
+#  - path: "data/state/*.json"
+#    kind: "JSON state files - document keys, types and meaning"
+
+# Where the code lives. Used to scope searches and to map a diff to domains.
+# Empty means the whole repository.
+source_dirs: []
+#  - src/
+#  - web/
+
+# Secondary documents that may lag behind the code. The commands read them for
+# intent but record any disagreement with the code under "Needs Confirmation".
+secondary_docs: []
+#  - docs/architecture.md
+
+# Files the update command must never edit, in addition to feature spec
+# directories, README.md, AGENTS.md, CLAUDE.md and other agent instruction files.
+protected_paths: []
+
+# Code search. "auto" uses graft when it is installed, then ripgrep (rg), then
+# `grep -rna` (binary-safe). Set "rg", "graft" or "grep" to force one.
+search_tool: auto
+
+# Heading and status labels used inside domain specs. Change these only if your
+# templates use a different language; the commands look sections up by label.
+labels:
+  affected_domains: "Affected Domains"
+  needs_confirmation: "Needs Confirmation"
+  retired_rules: "Retired Rules"
+  decisions: "Decisions"
+  status_consolidated: "consolidated"
+  status_planned: "planned"
