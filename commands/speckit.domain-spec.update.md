@@ -77,7 +77,9 @@ use that instead.
 2. **Edit only domains the diff actually changed.** Start from
    `## <labels.affected_domains>`, then add any domain whose code, data source,
    endpoint, CLI flag or screen appears in the diff. Drop any listed domain the
-   diff did not touch.
+   diff did not touch. In a domain whose rules did not change, you may still
+   correct a related-domains row that the diff made stale (for example a new
+   caller of a shared rule); do not add a `history.md` row for that.
 3. **Write only what is now true.** Replace superseded rules in place. Do not
    keep "previously X" in `spec.md`, `data-model.md` or `contracts/`. The old
    rule goes into the `## <labels.retired_rules>` table of `history.md` with the

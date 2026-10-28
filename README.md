@@ -218,6 +218,9 @@ labels:
   Run `speckit.domain-spec.bootstrap <domain>`.
 - **Hooks do not run.** Check `.specify/extensions.yml` lists the
   `domain-spec` hooks as enabled.
+- **Reports come back in a different language than `language`.** Your agent's
+  own instructions (for example a user-level `CLAUDE.md` or `AGENTS.md`) take
+  precedence for chat output. Spec prose still follows `language`.
 
 ## Contributing
 
