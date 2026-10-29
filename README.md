@@ -61,9 +61,6 @@ each agent's command or skill format.
 ## Installation
 
 ```bash
-# From the community catalog (once listed)
-specify extension add domain-spec
-
 # From a release archive
 specify extension add domain-spec --from https://github.com/jinaparkdev/spec-kit-domain-spec/archive/refs/tags/v0.1.0.zip
 
@@ -71,8 +68,18 @@ specify extension add domain-spec --from https://github.com/jinaparkdev/spec-kit
 specify extension add --dev /path/to/spec-kit-domain-spec
 ```
 
+The extension is listed in the Spec Kit community catalog, but that catalog
+is discovery-only: `specify extension search domain-spec` finds it, and
+`specify extension add domain-spec` without `--from` does not install it.
+Use the release archive URL above.
+
 Installing registers the three commands and hooks, and copies the config
 template to `.specify/extensions/domain-spec/domain-spec-config.yml`.
+
+After installing, check `.specify/extensions.yml`. If other extensions also
+hook `after_implement` (code review, auto-commit), the installer may append
+`speckit.domain-spec.update` after the commit hook. Move it so it runs after
+review and before commit.
 
 Then scaffold the domain directory:
 
@@ -82,6 +89,29 @@ Then scaffold the domain directory:
 
 or, in a project that already has feature specs, run it without arguments to
 get a proposed domain map.
+
+### Adopting in a project that already keeps domain specs
+
+If the project already has a `specs/_domains/` layout, for example from a
+hand-written version of these commands, keep the specs and replace only the
+commands:
+
+1. Remove the old extension directory if it uses the same id
+   (`git rm -r .specify/extensions/domain-spec`), then install as above.
+2. Move project-specific rules from the old commands into
+   `domain-spec-config.yml`: feature directory glob, bug-fix directories
+   (`extra_change_dirs`), rule tag format, shared-rule domains
+   (`common_domains`), data sources, documents that may lag the code
+   (`secondary_docs`).
+3. Set `labels` to the headings and status words your existing specs use, so
+   the commands find them. Your feature spec template's affected-domains
+   heading must match `labels.affected_domains`.
+4. Do not run `bootstrap`; the specs are already consolidated. Run
+   `/speckit-domain-spec-context <a feature description>` once and check that
+   it picks the expected domains and does not write anything.
+5. If you keep agent skills or commands in version control, check them after
+   installing: the installer regenerates them for the active agent only and
+   overwrites existing files with the same name.
 
 ## Commands
 
